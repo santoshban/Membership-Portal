@@ -1,0 +1,5 @@
+{
+  "name": "Membership Management Platform",
+  "description": "A comprehensive platform to manage members, membership levels, payments, and generate invoices. It supports financial year tracking, customizable invoices, and historical data preservation.",
+  "requestFramePermissions": []
+}
