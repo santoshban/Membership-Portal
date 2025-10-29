@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AdminProfileData } from '../types';
 import Input from './common/Input';
 import Button from './common/Button';
+import { DownloadIcon, UploadIcon } from './icons';
 
 interface ProfileProps {
     adminProfile: AdminProfileData;
@@ -11,6 +12,8 @@ interface ProfileProps {
     loginTimestamps: string[];
     logoutTimestamps: string[];
     onResetData: () => void;
+    onExportData: () => void;
+    onImportData: (fileContent: string) => void;
 }
 
 const Profile: React.FC<ProfileProps> = ({
@@ -21,6 +24,8 @@ const Profile: React.FC<ProfileProps> = ({
     loginTimestamps,
     logoutTimestamps,
     onResetData,
+    onExportData,
+    onImportData,
 }) => {
     // State for admin details
     const [name, setName] = useState(adminProfile.name);
@@ -33,6 +38,8 @@ const Profile: React.FC<ProfileProps> = ({
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [passwordSuccess, setPasswordSuccess] = useState('');
+
+    const importFileRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         setName(adminProfile.name);
@@ -78,6 +85,27 @@ const Profile: React.FC<ProfileProps> = ({
             dateStyle: 'medium',
             timeStyle: 'medium',
         });
+    };
+
+    const handleImportClick = () => {
+        importFileRef.current?.click();
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const fileContent = event.target?.result;
+            if (typeof fileContent === 'string') {
+                onImportData(fileContent);
+            }
+        };
+        reader.readAsText(file);
+        
+        // Reset file input to allow selecting the same file again
+        e.target.value = '';
     };
 
     return (
@@ -168,6 +196,30 @@ const Profile: React.FC<ProfileProps> = ({
                             )) : <p className="text-gray-500 italic">No logout history.</p>}
                         </ul>
                     </div>
+                </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+                <h3 className="text-xl font-semibold text-gray-700 mb-4">Data Management</h3>
+                <p className="text-sm text-gray-600 mb-6">
+                    Export your current application data as a JSON file for backup or to import into another browser. Importing a file will overwrite all existing data.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                    <input
+                        type="file"
+                        ref={importFileRef}
+                        className="hidden"
+                        accept=".json"
+                        onChange={handleFileChange}
+                    />
+                    <Button onClick={handleImportClick} variant="secondary" className="w-full sm:w-auto">
+                        <UploadIcon className="mr-2" />
+                        Import Data
+                    </Button>
+                    <Button onClick={onExportData} variant="secondary" className="w-full sm:w-auto">
+                        <DownloadIcon className="mr-2" />
+                        Export Data
+                    </Button>
                 </div>
             </div>
 

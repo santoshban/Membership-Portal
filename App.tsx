@@ -168,6 +168,87 @@ const App: React.FC = () => {
         });
     };
 
+    const handleExportData = () => {
+        try {
+            const dataToExport = {
+                version: '1.0.0',
+                exportedAt: new Date().toISOString(),
+                data: {
+                    members,
+                    invoices,
+                    membershipLevels,
+                    adminPassword,
+                    adminProfile,
+                    settings,
+                }
+            };
+            const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+                JSON.stringify(dataToExport, null, 2)
+            )}`;
+            const link = document.createElement("a");
+            link.href = jsonString;
+            const date = new Date().toISOString().split('T')[0];
+            link.download = `membership_data_backup_${date}.json`;
+            link.click();
+            setNotificationModal({
+                type: 'ALERT',
+                title: 'Export Successful',
+                message: 'Your data has been successfully exported.'
+            });
+        } catch (error) {
+            console.error("Failed to export data:", error);
+            setNotificationModal({
+                type: 'ALERT',
+                title: 'Export Failed',
+                message: 'An error occurred while exporting your data. Please check the console for details.'
+            });
+        }
+    };
+
+    const handleImportData = (fileContent: string) => {
+        setNotificationModal({
+            type: 'CONFIRM',
+            title: 'Import Data',
+            message: 'Are you sure you want to import this data? All current data will be overwritten. This action cannot be undone.',
+            confirmVariant: 'danger',
+            confirmText: 'Import & Overwrite',
+            onConfirm: () => {
+                try {
+                    const importedObject = JSON.parse(fileContent);
+                    // Basic validation
+                    if (!importedObject.data || !importedObject.data.members || !importedObject.data.invoices) {
+                         throw new Error('Invalid or corrupted data file.');
+                    }
+    
+                    // Set all data from the imported file
+                    setMembers(importedObject.data.members);
+                    setInvoices(importedObject.data.invoices);
+                    setMembershipLevels(importedObject.data.membershipLevels);
+                    setAdminPassword(importedObject.data.adminPassword);
+                    setAdminProfile(importedObject.data.adminProfile);
+                    setSettings(importedObject.data.settings);
+                    
+                    setNotificationModal({
+                        type: 'ALERT',
+                        title: 'Import Successful',
+                        message: 'Data imported successfully. The application will now reload.',
+                        onClose: () => {
+                            window.location.reload();
+                        }
+                    });
+    
+                } catch (error) {
+                    console.error("Failed to import data:", error);
+                     setNotificationModal({
+                        type: 'ALERT',
+                        title: 'Import Failed',
+                        message: `An error occurred while importing data: ${error instanceof Error ? error.message : 'Unknown error'}`
+                    });
+                }
+            }
+        });
+    };
+
     const handleSaveMember = (member: Member) => {
         const allLevels = membershipLevels.flatMap(g => g.levels);
         if (modal?.type === 'ADD_MEMBER') {
@@ -440,6 +521,8 @@ const App: React.FC = () => {
                             loginTimestamps={loginTimestamps}
                             logoutTimestamps={logoutTimestamps}
                             onResetData={handleResetData}
+                            onExportData={handleExportData}
+                            onImportData={handleImportData}
                         />
                     )}
                 </main>

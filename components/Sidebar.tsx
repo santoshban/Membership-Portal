@@ -37,7 +37,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, onLogout, is
         <aside className={`fixed top-0 left-0 h-full bg-white text-gray-800 flex flex-col p-4 transition-all duration-300 z-20 border-r border-gray-200 ${isCollapsed ? 'w-20' : 'w-64'}`}>
             <div className={`mb-8 flex items-center ${isCollapsed ? 'justify-center' : 'justify-start'}`}>
                 {logo ? (
-                    <img src={logo} alt="Logo" className={`h-10 ${isCollapsed ? 'w-10 object-contain' : 'w-auto'}`} />
+                    <img src={logo} alt="Logo" className={`h-10 object-contain ${isCollapsed ? 'w-16' : 'w-auto'}`} />
                 ) : (
                     !isCollapsed && (
                         <div>

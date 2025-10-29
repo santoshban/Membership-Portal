@@ -39,7 +39,7 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ member, invoice, sett
             <div className="flex justify-between items-start mb-10">
                 <div>
                      {settings.customLogo ? (
-                        <img src={settings.customLogo} alt="Logo" className="h-16 w-auto" />
+                        <img src={settings.customLogo} alt="Logo" className="h-16 w-auto max-w-full" />
                     ) : (
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900">ECCNSW</h1>

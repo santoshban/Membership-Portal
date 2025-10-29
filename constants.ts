@@ -97,7 +97,7 @@ export const INITIAL_INVOICES: Invoice[] = [
 ];
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
-    customLogo: null,
+    customLogo: 'https://eccnsw.org.au/wp-content/uploads/2024/09/eccnsw-logo-color.svg',
     paymentInstructions: `By EFT:
 Account Name: Ethnic Communities Council of NSW
 BSB 062-231 Account Number 10214470
